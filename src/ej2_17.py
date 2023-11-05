@@ -10,11 +10,48 @@ Más de 60000€ --> 45%
 
 Escribir un programa que pregunte al usuario su renta anual y muestre por pantalla el tipo impositivo que le corresponde.
 
-"""
-def esFloat (entrada:str):
-    return entrada.count(".") == 1 and entrada.replace(".", "").isnumeric()
-        
+Por mi parte: programado para aceptar números con formato español, inglés o sin nada de nada
 
+"""       
+def comprobarNumeric (entrada: str):
+    if (entrada.count(".") != 0) or (entrada.count(",") != 0):
+        return entrada.replace(".", "").replace(",", "").isnumeric()
+    else: 
+        return entrada.isnumeric()
+
+
+def caracterLimitante (entrada: str):
+    if entrada.count(".") == 1: #Si hay 1 punto y 1 coma, por defecto el pto es el limitante
+        return "."
+    elif entrada.count(",") == 1:
+        return ","
+    else:
+        return None
+
+def convertirAFloat (cadena: str) -> float:
+    limitante = caracterLimitante(cadena)
+
+    if limitante == None:
+        #Si es un entero que lo pase a float
+        if (cadena.count(",") == 0) and (cadena.count(".") == 0):
+            return float(cadena)
+        return None
+    
+    else:
+        #Si el limitante es el ".", las "," sobran
+        if limitante == ".": 
+            return float(cadena.replace(",", ""))
+        #Si la "," es la limitante, hay que cambiarla por un "." y los "." quitarlos
+        elif limitante == ",":
+            #Si es la ",", quitamos los "." y se cambia la "," para Python OK decimales
+            return float (cadena.replace(".", "").replace(",", ".")) 
+        else:
+            #Si hay separador de unidades con "." o "," pero no decimales, los quita
+            if ((cadena.count(".") >1) and (cadena.count(",")==0)) or (((cadena.count(",") >1) and (cadena.count(".")==0))):
+                return float (cadena.replace(".", "").replace(",", ""))
+            #Si hay más de 1 "." y 1 "," a la vez, el número está mal
+            else: 
+                return None
 
 def tipoImpositivo (renta: float):
     if renta <= float (10000):
@@ -29,16 +66,22 @@ def tipoImpositivo (renta: float):
 
 
 def formatearAPorcentaje (num: float) -> str:
-    porcentaje = str((num*100))+'%'
-
+    porcentaje = str(int((num*100)))+'%'
+    return porcentaje
 
 def main ():
-    renta = input("Indique su renta anual: ")
-    if esFloat (renta):
-        tipo =  tipoImpositivo(float(renta))  
-        print ("El tipo impositivo que le corresponde es: ",formatearAPorcentaje(tipo))
+    renta = str(input("Indique su renta anual: "))
+
+    if comprobarNumeric(renta):
+        if convertirAFloat (renta)!= None:
+            renta_f = convertirAFloat(renta)
+            tipo =  tipoImpositivo(renta_f)  
+            print ("El tipo impositivo que le corresponde es: ",formatearAPorcentaje(tipo))
+        else:
+            print ("**ERROR** Caracteres desconocidos en la renta, revise el formato.")
     else:
-        print ("**ERROR** renta no es un tipo float")
+        print ("**ERROR** Introduzca la renta de nuevo.")
+        main()
 
 
 

@@ -1,14 +1,13 @@
 import pytest
-from src.ej2_17 import convertirFloat
+from src.ej2_17 import esFloat
 
 @pytest.mark.parametrize(
     "entrada, expected",
     [
-        ('mujer', 'Zoe', 'B'),
-        ('mujer', 'Ana', 'A'),
-        ('hombre', 'Zacarias', 'A'),
-        ('hombre', 'Bruno', 'B'),
+        ('10000', True),
+        ('mujer', False),
+        ('25.500', True),
     ]
 )
-def test_perteneceGrupo_params(sexo, nombre, expected):
-    assert perteneceGrupo (sexo, nombre) == expected
+def test_esFloat_params(entrada, expected):
+    assert esFloat (entrada) == expected
